@@ -8,7 +8,6 @@ from rag.retriever import retrieve_relevant_chunks
 from agents.answer_agent import generate_answer
 from agents.citation_checker_agent import check_citations
 
-
 class CiteGuardState(TypedDict):
     question: str
     chunks: list
