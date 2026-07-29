@@ -59,7 +59,8 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_56CD6E1BA72D4D85AFF205D7CDB3DCDF }}
 
       - name: Zip artifact for deployment
-        run: zip -r deploy.zip .
+        run: |
+          zip -r deploy.zip . -x "*.git*" "antenv/*" ".github/*" "*.DS_Store"
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
