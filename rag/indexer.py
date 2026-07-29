@@ -2,7 +2,7 @@ import os
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import MarkdownTextSplitter
 from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -38,7 +38,8 @@ def index_documents():
     print(f"Created {len(chunks)} chunks.")
 
     print("Embedding and indexing (this uses a free local model, no API cost)...")
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
 
     # Delete existing collection first to avoid duplicate entries on re-runs
     existing_store = Chroma(

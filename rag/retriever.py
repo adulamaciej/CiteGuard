@@ -1,16 +1,16 @@
 import os
+from langchain_openai import OpenAIEmbeddings
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from config import CHROMA_PATH, COLLECTION_NAME
 
 from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
 
 
 def get_vectorstore():
     """Load the existing ChromaDB vectorstore."""
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     return Chroma(
         collection_name=COLLECTION_NAME,
         embedding_function=embeddings,
