@@ -58,11 +58,14 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_573FC79B33A64956AA4C1EC607CD46A3 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_56CD6E1BA72D4D85AFF205D7CDB3DCDF }}
 
+      - name: Zip artifact for deployment
+        run: zip -r deploy.zip .
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'citeguard-api'
           slot-name: 'Production'
-          package: '.'
+          package: 'deploy.zip'
           type: zip
