@@ -16,11 +16,11 @@ CiteGuard answers questions about LangChain/LangGraph documentation using retrie
 
 **Live API, deployed on Azure:**
 
-![CiteGuard API on Azure](swagger_ui_screenshot.png)
+![CiteGuard API on Azure](assets/swagger_ui_screenshot.png)
 
 **Analytics dashboard (Power BI), built from exported query logs:**
 
-![CiteGuard Power BI Dashboard](powerbi_dashboard_screenshot.png)
+![CiteGuard Power BI Dashboard](assets/powerbi_dashboard_screenshot.png)
 
 ---
 
