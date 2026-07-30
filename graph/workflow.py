@@ -5,11 +5,13 @@ import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from rag.retriever import retrieve_relevant_chunks
+from rag.reranker import rerank_chunks
 from agents.answer_agent import generate_answer
 from agents.citation_checker_agent import check_citations
 
 class CiteGuardState(TypedDict):
     question: str
+    candidate_chunks: list
     chunks: list
     answer: str
     verified: bool
@@ -17,7 +19,12 @@ class CiteGuardState(TypedDict):
 
 
 def retrieve_node(state: CiteGuardState) -> CiteGuardState:
-    chunks = retrieve_relevant_chunks(state["question"])
+    candidate_chunks = retrieve_relevant_chunks(state["question"], k=20)
+    return {**state, "candidate_chunks": candidate_chunks}
+
+
+def rerank_node(state: CiteGuardState) -> CiteGuardState:
+    chunks = rerank_chunks(state["question"], state["candidate_chunks"], top_n=4)
     return {**state, "chunks": chunks}
 
 
@@ -34,11 +41,13 @@ def verify_node(state: CiteGuardState) -> CiteGuardState:
 def build_graph():
     graph = StateGraph(CiteGuardState)
     graph.add_node("retrieve", retrieve_node)
+    graph.add_node("rerank", rerank_node)
     graph.add_node("answer", answer_node)
     graph.add_node("verify", verify_node)
 
     graph.set_entry_point("retrieve")
-    graph.add_edge("retrieve", "answer")
+    graph.add_edge("retrieve", "rerank")
+    graph.add_edge("rerank", "answer")
     graph.add_edge("answer", "verify")
     graph.add_edge("verify", END)
 

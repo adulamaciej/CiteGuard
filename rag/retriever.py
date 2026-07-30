@@ -18,7 +18,7 @@ def get_vectorstore():
     )
 
 
-def retrieve_relevant_chunks(query: str, k: int = 4):
+def retrieve_relevant_chunks(query: str, k: int = 15):
     """Retrieve the k most relevant chunks for a given query."""
     vectorstore = get_vectorstore()
     results = vectorstore.similarity_search(query, k=k)

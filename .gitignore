@@ -3,3 +3,5 @@ __pycache__/
 .env
 langchain-source/
 data/chroma/
+data/results_log.csv
+data/citeguard_results.xlsx
