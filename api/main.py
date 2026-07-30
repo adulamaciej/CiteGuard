@@ -3,20 +3,24 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from fastapi import FastAPI
 from pydantic import BaseModel
 
 from graph.workflow import build_graph
 from rag.reranker import get_reranker
 import pandas as pd
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
 from utils.results_logger import log_result, LOG_PATH
+from config import BASE_DIR
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(title="CiteGuard API", description="Documentation Q&A with citation verification")
 
-get_reranker()  # wymusza załadowanie modelu przy starcie, nie przy pierwszym request
+
+get_reranker() 
 graph_app = build_graph()
 
 class QuestionRequest(BaseModel):
@@ -55,17 +59,17 @@ def ask(request: QuestionRequest):
 @app.get("/export/csv")
 def export_csv():
     if not os.path.isfile(LOG_PATH):
-        raise HTTPException(status_code=404, detail="Brak zapisanych wynikow - najpierw zadaj przynajmniej jedno pytanie")
+        raise HTTPException(status_code=404, detail="No results saved yet - ask at least one question first")
     return FileResponse(LOG_PATH, filename="citeguard_results.csv", media_type="text/csv")
 
 
 @app.get("/export/excel")
 def export_excel():
     if not os.path.isfile(LOG_PATH):
-        raise HTTPException(status_code=404, detail="Brak zapisanych wynikow - najpierw zadaj przynajmniej jedno pytanie")
+        raise HTTPException(status_code=404, detail="No results saved yet - ask at least one question first")
 
     df = pd.read_csv(LOG_PATH)
-    excel_path = "./data/citeguard_results.xlsx"
+    excel_path = os.path.join(BASE_DIR, "data", "citeguard_results.xlsx")
     df.to_excel(excel_path, index=False)
 
     return FileResponse(

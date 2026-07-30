@@ -25,6 +25,7 @@ def retrieve_relevant_chunks(query: str, k: int = 15):
     return results
 
 
+# for debugging and testing purposes
 if __name__ == "__main__":
     query = "How do I build a multi-agent system with LangGraph?"
     results = retrieve_relevant_chunks(query)

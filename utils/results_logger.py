@@ -1,14 +1,18 @@
 import csv
 import os
 from datetime import datetime
+from config import BASE_DIR
 
-LOG_PATH = "./data/results_log.csv"
+
+LOG_PATH = os.path.join(BASE_DIR, "data", "results_log.csv")
+
 
 FIELDNAMES = ["timestamp", "question", "answer", "verified", "reasoning"]
 
 
 def log_result(question: str, answer: str, verified: bool, reasoning: str):
-    """Zapisuje wynik zapytania (append) do pliku CSV z logiem wszystkich odpowiedzi."""
+
+    """Appends one row to a CSV after each /ask call."""
     os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
     file_exists = os.path.isfile(LOG_PATH)
 

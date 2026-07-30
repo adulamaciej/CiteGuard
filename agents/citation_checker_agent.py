@@ -38,7 +38,7 @@ REASONING: brief explanation, noting any unsupported claims if found"""
     response = llm.invoke(prompt)
     result_text = response.content
 
-    verified = "VERIFIED: yes" in result_text.lower().replace("verified:", "VERIFIED:").upper() or "VERIFIED: YES" in result_text.upper()
+    verified = "VERIFIED: YES" in result_text.upper()
     reasoning = result_text.split("REASONING:")[-1].strip() if "REASONING:" in result_text else result_text
 
     return {

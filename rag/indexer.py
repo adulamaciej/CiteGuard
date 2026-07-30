@@ -1,16 +1,20 @@
 import os
+import sys
+from dotenv import load_dotenv
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from config import DOCS_PATH, CHROMA_PATH, COLLECTION_NAME
+
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import MarkdownTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from config import DOCS_PATH, CHROMA_PATH, COLLECTION_NAME
+load_dotenv()
 
 
 def load_documents():
-    """Load all .mdx files from the docs path."""
+    """Loading all .mdx files from the docs path."""
     loader = DirectoryLoader(
         DOCS_PATH,
         glob="**/*.mdx",
@@ -22,13 +26,13 @@ def load_documents():
 
 
 def split_documents(documents):
-    """Split documents into smaller chunks for retrieval."""
+    """Splitting documents into smaller chunks for retrieval."""
     splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=100)
     return splitter.split_documents(documents)
 
 
 def index_documents():
-    """Load, split, and index documents into ChromaDB (overwrites existing collection)."""
+    """Loading, splitting, and indexing  documents into ChromaDB (overwrites existing collection)."""
     print("Loading documents...")
     documents = load_documents()
     print(f"Loaded {len(documents)} documents.")
@@ -61,5 +65,6 @@ def index_documents():
     return vectorstore
 
 
+# For manual debugging: python rag/indexer.py
 if __name__ == "__main__":
     index_documents()
