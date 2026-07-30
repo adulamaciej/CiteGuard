@@ -1,8 +1,8 @@
 import os
 
-MODEL = os.getenv("CITEGUARD_MODEL", "claude-haiku-4-5-20251001")
-JUDGE_MODEL = os.getenv("CITEGUARD_JUDGE_MODEL", "claude-sonnet-5")
+# Resolving paths relative to this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-DOCS_PATH = "./langchain-source/src/oss/langchain"
-CHROMA_PATH = "./data/chroma"
+DOCS_PATH = os.path.join(BASE_DIR, "langchain-source/src/oss/langchain")
+CHROMA_PATH = os.path.join(BASE_DIR, "data/chroma")
 COLLECTION_NAME = "langchain_docs"
