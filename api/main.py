@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -8,6 +9,7 @@ from config import BASE_DIR
 from graph.workflow import build_graph
 from rag.reranker import get_reranker
 import pandas as pd
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
@@ -15,6 +17,11 @@ from utils.results_logger import log_result, fetch_all_results, fetch_stats
 from dotenv import load_dotenv
 
 load_dotenv()
+
+from logging_config import setup_logging
+setup_logging()
+logger = logging.getLogger(__name__)
+
 
 app = FastAPI(title="CiteGuard API", description="Documentation Q&A with citation verification")
 
@@ -39,14 +46,29 @@ def root():
 
 @app.post("/ask", response_model=AnswerResponse)
 def ask(request: QuestionRequest):
-    result = graph_app.invoke({"question": request.question})
+    logger.info(f"Received question: {request.question}")
 
-    log_result(
+    try:
+        result = graph_app.invoke({"question": request.question})
+    except Exception as e:
+        logger.error(f"Pipeline failed for question '{request.question}': {e}")
+        raise HTTPException(
+            status_code=502,
+            detail="The AI service is temporarily unavailable. Please try again in a moment."
+        )
+    
+    logger.info(f"Answer verified: {result['verified']}")
+
+    try:
+        log_result(
         question=request.question,
         answer=result["answer"],
         verified=result["verified"],
         reasoning=result["reasoning"],
     )
+    except Exception as e:
+        logger.error(f"Failed to log result: {e}")
+    # don't fail the request just because logging failed
 
     return AnswerResponse(
         answer=result["answer"],

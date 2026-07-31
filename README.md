@@ -4,7 +4,7 @@
 
 CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the model hallucinates, CiteGuard flags it.
 
-**The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, and a Power BI dashboard for analyzing results.
+**The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, and a Power BI dashboard for analyzing results.
 
 
 🔗 **Live API (Swagger UI):** [citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs](https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs) — deployed on Azure App Service, try `/ask` directly, no setup required.
@@ -68,8 +68,9 @@ The pipeline is orchestrated as a [LangGraph](https://github.com/langchain-ai/la
 - **LLM:** OpenAI (`gpt-5-mini`) for both answer generation and citation checking
 - **Retrieval:** ChromaDB (vector store), OpenAI embeddings (`text-embedding-3-small`)
 - **Reranking:** Hugging Face `sentence-transformers` cross-encoder
-- **API:** FastAPI + Uvicorn
+- **API:** FastAPI + Uvicorn, with structured logging and error handling on external LLM calls
 - **Observability:** LangSmith (distributed tracing across all four pipeline steps)
+- **Storage:** SQLite for logging every query, with SQL aggregation queries for stats
 - **Data export:** CSV / Excel export of every logged query, built for downstream analysis in Power BI
 
 ---
@@ -104,7 +105,7 @@ CiteGuard/
 CiteGuard indexes LangChain's own documentation. The docs source isn't bundled in this repo (it's a full external repo) — clone it separately into the project root:
 
 ```bash
-git clone https://github.com/langchain-ai/langchain.git langchain-source
+git clone https://github.com/langchain-ai/docs.git docs
 ```
 
 ### 2. Create a virtual environment and install dependencies
@@ -153,8 +154,10 @@ Visit `http://127.0.0.1:8000/docs` for the interactive Swagger UI.
 |---|---|---|
 | `/` | GET | Health check |
 | `/ask` | POST | Ask a question — returns `answer`, `verified`, `reasoning` |
+| `/stats` | GET | Aggregate stats (count, avg answer length) grouped by verification status, via SQL |
 | `/export/csv` | GET | Download the full query log as CSV |
 | `/export/excel` | GET | Download the full query log as Excel |
+
 
 Example request:
 
@@ -168,7 +171,7 @@ curl -X POST http://127.0.0.1:8000/ask \
 
 ## Data export & analysis
 
-Every call to `/ask` is logged (question, answer, verified status, reasoning, timestamp) to a local CSV. The `/export/excel` endpoint converts this into a spreadsheet ready to drop into Power BI, Excel, or any BI tool — useful for tracking things like verification rate over time or which topics the system struggles with. See the dashboard screenshot above for an example built directly from this export.
+Every call to `/ask` is logged (question, answer, verified status, reasoning, timestamp) to a local SQLite database. The `/export/excel` endpoint converts this into a spreadsheet ready to drop into Power BI, Excel, or any BI tool — useful for tracking things like verification rate over time or which topics the system struggles with. See the dashboard screenshot above for an example built directly from this export.
 
 ---
 
@@ -177,5 +180,6 @@ Every call to `/ask` is logged (question, answer, verified status, reasoning, ti
 - **Two-stage retrieval (vector search + reranking):** vector similarity alone often returns chunks that are topically related but don't actually answer the question. Reranking with a cross-encoder — which scores the query and chunk together, rather than as independent vectors — meaningfully improves precision before the chunks reach the LLM.
 - **Separate answer and verification models/prompts:** using an independent pass to check citations (rather than asking the same call to "be careful") catches errors the generating model is otherwise blind to, since it isn't re-reading its own output critically.
 - **Fail-safe prompting:** the answer agent is explicitly instructed to say it can't answer rather than fill gaps with general knowledge — this keeps the verification step meaningful instead of chasing plausible-sounding but ungrounded text.
+- **Graceful degradation on external failures:** if the OpenAI or Hugging Face calls fail mid-pipeline, `/ask` returns a clear 502 error instead of a raw stack trace, and a logging failure never blocks the response from reaching the user. Structured logging (via Python's `logging` module) traces each request through retrieval, reranking, answering, and verification.
 
 ---

@@ -5,3 +5,6 @@ langchain-source/
 data/chroma/
 data/results_log.csv
 data/citeguard_results.xlsx
+data/results_log.db
+data/citeguard_results.csv
+docs/

@@ -1,16 +1,22 @@
 import os
 import sys
 from dotenv import load_dotenv
+import logging
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from config import DOCS_PATH, CHROMA_PATH, COLLECTION_NAME
 
+from config import DOCS_PATH, CHROMA_PATH, COLLECTION_NAME
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import MarkdownTextSplitter
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
 load_dotenv()
+
+
+from logging_config import setup_logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def load_documents():
@@ -33,15 +39,15 @@ def split_documents(documents):
 
 def index_documents():
     """Loading, splitting, and indexing  documents into ChromaDB (overwrites existing collection)."""
-    print("Loading documents...")
+    logger.info("Loading documents...")
     documents = load_documents()
-    print(f"Loaded {len(documents)} documents.")
+    logger.info(f"Loaded {len(documents)} documents.")
 
-    print("Splitting into chunks...")
+    logger.info("Splitting into chunks...")
     chunks = split_documents(documents)
-    print(f"Created {len(chunks)} chunks.")
+    logger.info(f"Created {len(chunks)} chunks.")
 
-    print("Embedding and indexing (this uses a free local model, no API cost)...")
+    logger.info("Embedding and indexing...")
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 
@@ -52,7 +58,7 @@ def index_documents():
         persist_directory=CHROMA_PATH,
     )
     existing_store.delete_collection()
-    print("Cleared any existing collection.")
+    logger.info("Cleared any existing collection.")
 
     vectorstore = Chroma.from_documents(
         documents=chunks,
@@ -61,7 +67,7 @@ def index_documents():
         persist_directory=CHROMA_PATH,
     )
 
-    print(f"✅ Indexed {len(chunks)} chunks into ChromaDB at {CHROMA_PATH}")
+    logger.info(f"Indexed {len(chunks)} chunks into ChromaDB at {CHROMA_PATH}")
     return vectorstore
 
 

@@ -1,5 +1,8 @@
 import os
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -8,6 +11,7 @@ from langchain_openai import ChatOpenAI
 
 def generate_answer(question: str, retrieved_chunks: list) -> str:
     """Generate an answer to the question using retrieved documentation chunks as context."""
+    logger.info(f"Generating answer for: {question}")
     context = "\n\n---\n\n".join([
         f"Source: {chunk.metadata.get('source', 'unknown')}\n{chunk.page_content}"
         for chunk in retrieved_chunks

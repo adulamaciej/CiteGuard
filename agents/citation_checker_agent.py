@@ -4,6 +4,9 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from langchain_openai import ChatOpenAI
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def check_citations(question: str, answer: str, retrieved_chunks: list) -> dict:
@@ -40,6 +43,8 @@ REASONING: brief explanation, noting any unsupported claims if found"""
 
     verified = "VERIFIED: YES" in result_text.upper()
     reasoning = result_text.split("REASONING:")[-1].strip() if "REASONING:" in result_text else result_text
+
+    logger.info(f"Citation check result: verified={verified}")
 
     return {
         "verified": verified,
