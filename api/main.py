@@ -4,15 +4,14 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from pydantic import BaseModel
-
+from config import BASE_DIR
 from graph.workflow import build_graph
 from rag.reranker import get_reranker
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
-from utils.results_logger import log_result, LOG_PATH
-from config import BASE_DIR
+from utils.results_logger import log_result, fetch_all_results, fetch_stats
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -55,20 +54,34 @@ def ask(request: QuestionRequest):
         reasoning=result["reasoning"]
     )
 
+@app.get("/stats")
+def stats():
+    results = fetch_stats()
+    if not results:
+        raise HTTPException(status_code=404, detail="No results saved yet - ask at least one question first")
+    return {"stats": results}
+
 
 @app.get("/export/csv")
 def export_csv():
-    if not os.path.isfile(LOG_PATH):
+    results = fetch_all_results()
+    if not results:
         raise HTTPException(status_code=404, detail="No results saved yet - ask at least one question first")
-    return FileResponse(LOG_PATH, filename="citeguard_results.csv", media_type="text/csv")
+
+    df = pd.DataFrame(results)
+    csv_path = os.path.join(BASE_DIR, "data", "citeguard_results.csv")
+    df.to_csv(csv_path, index=False)
+
+    return FileResponse(csv_path, filename="citeguard_results.csv", media_type="text/csv")
 
 
 @app.get("/export/excel")
 def export_excel():
-    if not os.path.isfile(LOG_PATH):
+    results = fetch_all_results()
+    if not results:
         raise HTTPException(status_code=404, detail="No results saved yet - ask at least one question first")
 
-    df = pd.read_csv(LOG_PATH)
+    df = pd.DataFrame(results)
     excel_path = os.path.join(BASE_DIR, "data", "citeguard_results.xlsx")
     df.to_excel(excel_path, index=False)
 
