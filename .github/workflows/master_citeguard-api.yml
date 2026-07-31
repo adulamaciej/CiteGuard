@@ -16,13 +16,23 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.14'
 
       - name: Create venv and install dependencies
         run: |
           python -m venv antenv
           source antenv/bin/activate
           pip install -r requirements.txt
+
+      - name: Clone LangChain docs source
+        run: git clone --depth 1 https://github.com/langchain-ai/langchain.git langchain-source
+
+      - name: Build ChromaDB index
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          source antenv/bin/activate
+          python rag/indexer.py
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
@@ -31,6 +41,8 @@ jobs:
           path: |
             .
             !antenv/
+            !langchain-source/
+
 
   deploy:
     runs-on: ubuntu-latest
