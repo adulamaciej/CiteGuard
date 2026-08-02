@@ -13,7 +13,7 @@ jobs:
 
       - name: Download report from live API
         run: |
-          curl -X GET "https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/export/excel" \
+            curl -f -X GET "https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/export/excel" \
             -o citeguard_results.xlsx
 
       - name: Move report into reports folder
