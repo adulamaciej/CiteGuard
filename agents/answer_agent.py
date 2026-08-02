@@ -17,7 +17,7 @@ def generate_answer(question: str, retrieved_chunks: list) -> str:
         for chunk in retrieved_chunks
     ])
 
-    prompt = f"""You are a documentation assistant for LangChain.
+    prompt = f""""You are a documentation assistant for LangChain and LangGraph.".
 Answer the user's question using ONLY the information in the provided context below.
 If the context doesn't contain enough information to answer, say so explicitly.
 

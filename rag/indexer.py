@@ -5,7 +5,7 @@ import logging
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from config import DOCS_PATH, CHROMA_PATH, COLLECTION_NAME
+from config import DOCS_PATH, CHROMA_PATH, COLLECTION_NAME, LANGCHAIN_DOCS, LANGGRAPH_DOCS
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import MarkdownTextSplitter
 from langchain_chroma import Chroma
@@ -20,15 +20,12 @@ logger = logging.getLogger(__name__)
 
 
 def load_documents():
-    """Loading all .mdx files from the docs path."""
-    loader = DirectoryLoader(
-        DOCS_PATH,
-        glob="**/*.mdx",
-        loader_cls=TextLoader,
-        loader_kwargs={"encoding": "utf-8"},
-        show_progress=True,
-    )
-    return loader.load()
+    all_docs = []
+    for path in [LANGCHAIN_DOCS, LANGGRAPH_DOCS]:
+        loader = DirectoryLoader(path, glob="**/*.mdx", loader_cls=TextLoader,
+                                  loader_kwargs={"encoding": "utf-8"}, show_progress=True)
+        all_docs.extend(loader.load())
+    return all_docs
 
 
 def split_documents(documents):

@@ -7,6 +7,8 @@ from config import CHROMA_PATH, COLLECTION_NAME
 
 from langchain_chroma import Chroma
 
+from dotenv import load_dotenv
+load_dotenv()
 
 def get_vectorstore():
     """Load the existing ChromaDB vectorstore."""
