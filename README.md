@@ -4,7 +4,7 @@
 
 CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the model hallucinates, CiteGuard flags it.
 
-**The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, a scheduled GitHub Actions workflow for automated weekly reporting, and a Power BI dashboard for analyzing results.
+**The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, automated weekly reporting via a scheduled GitHub Actions workflow, and a self-refreshing Power BI dashboard for analyzing results.
 
 
 🔗 **Live API (Swagger UI):** [citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs](https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs) — deployed on Azure App Service, try `/ask` directly, no setup required.
@@ -21,6 +21,9 @@ CiteGuard answers questions about LangChain/LangGraph documentation using retrie
 **Analytics dashboard (Power BI), built from exported query logs:**
 
 ![CiteGuard Power BI Dashboard](assets/powerbi_dashboard_screenshot.png)
+
+The dashboard connects directly to the latest report file on GitHub and refreshes automatically on a weekly schedule.
+
 
 ---
 
