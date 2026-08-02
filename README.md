@@ -4,7 +4,7 @@
 
 CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the model hallucinates, CiteGuard flags it.
 
-**The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, and a Power BI dashboard for analyzing results.
+**The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, a scheduled GitHub Actions workflow for automated weekly reporting, and a Power BI dashboard for analyzing results.
 
 
 🔗 **Live API (Swagger UI):** [citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs](https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs) — deployed on Azure App Service, try `/ask` directly, no setup required.
@@ -172,6 +172,11 @@ curl -X POST http://127.0.0.1:8000/ask \
 ## Data export & analysis
 
 Every call to `/ask` is logged (question, answer, verified status, reasoning, timestamp) to a local SQLite database. The `/export/excel` endpoint converts this into a spreadsheet ready to drop into Power BI, Excel, or any BI tool — useful for tracking things like verification rate over time or which topics the system struggles with. See the dashboard screenshot above for an example built directly from this export.
+
+
+## Automated Weekly Report
+
+A scheduled GitHub Actions workflow (`weekly-report.yml`) runs every Monday, pulls the latest query logs from the live API via `/export/excel`, and automatically commits the report to the `reports/` folder — no manual step required.
 
 ---
 

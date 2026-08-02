@@ -18,8 +18,9 @@ jobs:
 
       - name: Move report into reports folder
         run: |
-          mkdir -p reports
-          mv citeguard_results.xlsx "reports/citeguard_results_$(date +%Y-%m-%d).xlsx"
+            mkdir -p reports
+            mv citeguard_results.xlsx "reports/citeguard_results_$(date +%Y-%m-%d).xlsx"
+            cp "reports/citeguard_results_$(date +%Y-%m-%d).xlsx" reports/latest.xlsx
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
