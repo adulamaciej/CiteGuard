@@ -2,6 +2,7 @@
 
 **An agentic AI system that helps you build AI and AI agents from trusted documentation—and verifies its answers for hallucinations and alignment before you rely on them.**
 
+
 CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the model hallucinates, CiteGuard flags it.
 
 **The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, automated weekly reporting via a scheduled GitHub Actions workflow, and a self-refreshing Power BI dashboard for analyzing results.
