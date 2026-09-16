@@ -3,7 +3,7 @@
 **Dual-agent AI system with RAG, where one agent answers AI engineering questions from technical documentation, while the second independently verifies the response for unsupported claims and potential hallucinations.**
 
 
-**Detailed description: CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the generated answer contains claims unsupported by the retrieved context, CiteGuard flags them as potentially hallucinated.**
+**Detailed description:** CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the generated answer contains claims unsupported by the retrieved context, CiteGuard flags them as potentially hallucinated.
 
 **The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, automated weekly reporting via a scheduled GitHub Actions workflow, and a self-refreshing Power BI dashboard for analyzing results.
 
