@@ -1,11 +1,26 @@
 # CiteGuard
 
-**A documentation Q&A system that checks its own answers before you have to.**
+**Dual-agent AI system with RAG, where one agent answers AI engineering questions from technical documentation, while the second independently verifies the response for unsupported claims and potential hallucinations.**
 
-CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the model hallucinates, CiteGuard flags it.
+
+**Detailed description:** CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the generated answer contains claims unsupported by the retrieved context, CiteGuard flags them as potentially hallucinated.
 
 **The application includes:** agentic AI pipeline powered by an LLM (OpenAI), a FastAPI backend deployed on Azure, SQLite storage with SQL-based analytics, automated weekly reporting via a scheduled GitHub Actions workflow, and a self-refreshing Power BI dashboard for analyzing results.
 
+
+## Tech stack
+- **Orchestration:** LangGraph, LangChain
+- **LLM:** OpenAI (`gpt-5-mini`)
+- **Embeddings:** OpenAI `text-embedding-3-small`
+- **Vector Database:** ChromaDB
+- **Reranking:** Hugging Face `sentence-transformers` cross-encoder
+- **API / Backend:** FastAPI, Uvicorn
+- **Observability:** LangSmith, structured logging
+- **Database:** SQLite, SQL
+- **Cloud:** Azure App Service
+- **Automation / CI:** GitHub Actions
+- **Analytics / BI:** Power BI
+- **Data Export:** CSV, Excel
 
 🔗 **Live API (Swagger UI):** [citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs](https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs) — deployed on Azure App Service, try `/ask` directly, no setup required.
 🔗 **Source:** [github.com/adulamaciej/CiteGuard](https://github.com/adulamaciej/CiteGuard)
@@ -62,19 +77,6 @@ The pipeline is orchestrated as a [LangGraph](https://github.com/langchain-ai/la
 | Verify | `agents/citation_checker_agent.py` | A second LLM pass that fact-checks the generated answer against the same source chunks and flags unsupported claims |
 
 **Important distinction:** `verified: true` means *no hallucinations were detected* — it does not mean the answer was useful. An honest "I can't answer this from the provided context" is just as "verified" as a detailed, well-grounded answer. That's by design: the verification step checks faithfulness to sources, not answer quality.
-
----
-
-## Tech stack
-
-- **Orchestration:** LangGraph, LangChain
-- **LLM:** OpenAI (`gpt-5-mini`) for both answer generation and citation checking
-- **Retrieval:** ChromaDB (vector store), OpenAI embeddings (`text-embedding-3-small`)
-- **Reranking:** Hugging Face `sentence-transformers` cross-encoder
-- **API:** FastAPI + Uvicorn, with structured logging and error handling on external LLM calls
-- **Observability:** LangSmith (distributed tracing across all four pipeline steps)
-- **Storage:** SQLite for logging every query, with SQL aggregation queries for stats
-- **Data export:** CSV / Excel export of every logged query, built for downstream analysis in Power BI
 
 ---
 
