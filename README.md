@@ -1,6 +1,6 @@
 # CiteGuard
 
-**Short description: An agentic RAG system for answering AI engineering questions from trusted documentation, with an independent verification layer that detects unsupported claims and potential hallucinations.**
+**Dual-agent AI system with RAG, where one agent answers AI engineering questions from technical documentation, while the second independently verifies the response for unsupported claims and potential hallucinations.**
 
 
 **Detailed description: CiteGuard answers questions about LangChain/LangGraph documentation using retrieval-augmented generation (RAG) — but instead of trusting the generated answer blindly, it runs a second, independent verification step that checks whether every claim in the answer is actually grounded in the retrieved source documents. If the generated answer contains claims unsupported by the retrieved context, CiteGuard flags them as potentially hallucinated.**
