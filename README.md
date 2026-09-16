@@ -21,6 +21,7 @@
 - **Automation / CI:** GitHub Actions
 - **Analytics / BI:** Power BI
 - **Data Export:** CSV, Excel
+- **Containerization:** Docker
 
 🔗 **Live API (Swagger UI):** [citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs](https://citeguard-api-fdc5hxd0asbhbhee.polandcentral-01.azurewebsites.net/docs) — deployed on Azure App Service, try `/ask` directly, no setup required.
 🔗 **Source:** [github.com/adulamaciej/CiteGuard](https://github.com/adulamaciej/CiteGuard)
